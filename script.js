@@ -225,7 +225,7 @@ cube.mesh.physic=groundBody
 for (let fi = -1; fi < 25; fi++) {create(new THREE.Vector3(randInt(-15,15), 3, randInt(-15,15)))}
 create(new THREE.Vector3(0,3,0))
 function create(pos){
-let texture4 = loadImg('tex/blocks/block'+randInt(1,10)+'.jpg',1,1);
+let texture4 = loadImg('tex/blocks/crate.jpg',1,1);
 let cube2 = {
   // The geometry: the shape & size of the object
   geometry: new THREE.BoxGeometry(1, 1, 1),
