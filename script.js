@@ -41,6 +41,7 @@ texture.minFilter = THREE.LinearMipMapLinearFilter;
 texture.repeat.set(x,y);
 return texture
 }
+function toRad(num){return num*(Math.PI/180)}
 // The renderer: something that draws 3D objects onto the canvas
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector("#c"), antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -171,7 +172,7 @@ class hold {
     holdPos.velocity.x = (tarPos.x-holdPos.position.x)*6;
     holdPos.velocity.z = (tarPos.z-holdPos.position.z)*6;
     holdPos.velocity.y = (tarPos.y-holdPos.position.y)*6;
-    console.log(holdPos.velocity.y)
+    
   }
   }
   
@@ -205,13 +206,23 @@ let texture = loadImg('tex/floor/grass32.jpg',4,4);
 // the floor
 const cube = {
   // The geometry: the shape & size of the object
-  geometry: new THREE.BoxGeometry(30, 1, 30),
+  geometry: new THREE.PlaneGeometry(30, 30, 30, 30),
   // The material: the appearance (color, texture) of the object
   material: new THREE.MeshBasicMaterial( {color: 0xffffff, map: texture} )
 };
 cube.mesh = new THREE.Mesh(cube.geometry, cube.material);
 scene.add(cube.mesh);
-cube.mesh.position.y = -0.5;
+cube.mesh.rotateX(toRad(270))
+//(geometry as THREE.BufferGeometry).attributes.position.needsUpdate = true
+cube.mesh.geometry.verticesNeedUpdate = true;
+console.log(cube)
+const position = cube.geometry.attributes.position.array;
+const vector = new THREE.Vector3();
+for (let i = 0; i < position.length; i += 3) {
+  position[i + 2] = 0.42 * Math.sin((position[i]*position[i+1])*0.43)
+}
+cube.mesh.geometry.verticesNeedUpdate = true;
+
 //cannonJS
 const groundBody = new CANNON.Body({
   type: CANNON.Body.STATIC,
@@ -225,7 +236,7 @@ cube.mesh.physic=groundBody
 for (let fi = -1; fi < 25; fi++) {create(new THREE.Vector3(randInt(-15,15), 3, randInt(-15,15)))}
 create(new THREE.Vector3(0,3,0))
 function create(pos){
-let texture4 = loadImg('tex/blocks/crate.jpg',1,1);
+let texture4 = loadImg('tex/blocks/crat.jpg',1,1);
 let cube2 = {
   // The geometry: the shape & size of the object
   geometry: new THREE.BoxGeometry(1, 1, 1),
@@ -253,18 +264,18 @@ pickable.add(cube2.mesh);
 } // font text load
 const loader = new FontLoader();
 
-loader.load( './tex/oxygen.json', function ( font ) {
+loader.load( './tex/rainyheart.json', function ( font ) {
 
-	const geometry = new TextGeometry( 'cube stacking simulator 4', {
+	const geometry = new TextGeometry( 'cube stacking simulator test', {
 		font: font,
 		size: 80,
 		height: 5,
 		curveSegments: 12,
 		bevelEnabled: true,
-		bevelThickness: 10,
-		bevelSize: 8,
-		bevelOffset: 0,
-		bevelSegments: 5
+		bevelThickness: 4,
+		bevelSize: 4,
+		bevelOffset: -1,
+		bevelSegments: 2
 	});
 let mat = new THREE.MeshStandardMaterial({color: 0xffffff});
   let textMesh1 = new THREE.Mesh( geometry, mat );
